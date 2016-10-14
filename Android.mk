@@ -33,11 +33,11 @@ LXC_BUILD_DIR := $(ANDROID_PRODUCT_OUT)/obj/lxc
 LXC_INSTALL_DIR := $(ANDROID_PRODUCT_OUT)
 
 # only include lxc-* binaries in userdebug builds
-ifeq ($(TARGET_BUILD_VARIANT),userdebug)
+#ifeq ($(TARGET_BUILD_VARIANT),userdebug)
 LXC_CONF_BINDIR := /system/bin
-else
-LXC_CONF_BINDIR := /obj/lxc/out/bin
-endif
+#else
+#LXC_CONF_BINDIR := /obj/lxc/out/bin
+#endif
 
 ifeq ($(TARGET_IS_64_BIT),true)
 LXC_CONF_LIBDIR := /system/lib64
