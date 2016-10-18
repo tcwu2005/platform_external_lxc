@@ -45,6 +45,27 @@ else
 LXC_CONF_LIBDIR := /system/lib
 endif
 
+#print enviroment variables,including LXC_BUILD_DIR/LXC_TOP/LXC_CONF_BINDIR/LXC_CONF_LIBDIR/LXC_CFLAGS/TARGET_OUT_INTERMEDIATE_LIBRARIES
+echo:
+	$(warning 'hello,I'm going to print enviroment variables)
+	$(warning 'LXC_BUILD_DIR)
+	$(warning $(LXC_BUILD_DIR))  
+	$(warning 'LXC_TOP')
+	$(warning $(LXC_TOP))
+	$(warning 'LXC_CONF_BINDIR')
+	$(warning $(LXC_CONF_BINDIR))
+	$(warning 'LXC_CONF_LIBDIR')
+	$(warning $(LXC_CONF_LIBDIR))
+	$(warning 'LXC_CFLAGS')
+	$(warning $(LXC_CFLAGS))
+	$(warning 'TARGET_OUT_INTERMEDIATE_LIBRARIES')
+	$(warning $(TARGET_OUT_INTERMEDIATE_LIBRARIES))
+	$(warning 'LXC_C_INCLUDES')
+	$(warning $(LXC_C_INCLUDES))
+	$(warning 'LXC_INSTALL_DIR')
+	$(warning $(LXC_INSTALL_DIR))
+
+
 # Android's build system looks for this exact target, so we use it like a hook
 # to trigger the native build process.
 # All paths here will be evaluated relative to $(LXC_BUILD_DIR) so use full paths.
