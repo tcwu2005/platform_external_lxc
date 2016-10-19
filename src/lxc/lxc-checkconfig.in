@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 # Allow environment variables to override grep and config
 : ${CONFIG:=/proc/config.gz}

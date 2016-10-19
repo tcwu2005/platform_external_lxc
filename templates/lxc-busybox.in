@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/system/bin/bash
 
 #
 # lxc: linux Container library
@@ -350,7 +350,7 @@ do
     esac
 done
 
-if [ "$(id -u)" != "0" ]; then
+if [ "$(id -u)" != "uid=0(root) gid=0(root)" ]; then
     echo "This script should be run as 'root'"
     exit 1
 fi
