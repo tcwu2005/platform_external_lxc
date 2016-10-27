@@ -295,8 +295,9 @@ void service_start(struct service *svc, const char *dynamic_args)
             zap_stdio();
         }
 #else
-printf("-----DO NOT redirect stdio-->disable it\n");
+printf("-----DO NOT call open_console() or zap_stdio() \n");
 fflush(stdout);
+fflush(stderr);
 #endif
 
 #if 0
@@ -306,6 +307,16 @@ fflush(stdout);
         for (n = 0; ENV[n]; n++) {
             INFO("env[%d] = '%s'\n", n, ENV[n]);
         }
+#endif
+#if 1
+        for (n = 0; svc->args[n]; n++) {
+            printf("args[%d] = '%s'\n", n, svc->args[n]);
+        }
+        for (n = 0; ENV[n]; n++) {
+            printf("env[%d] = '%s'\n", n, ENV[n]);
+        }
+fflush(stdout);
+fflush(stderr);
 #endif
 
         setpgid(0, getpid());
@@ -1067,6 +1078,7 @@ freopen("/init_log.txt", "a", stderr);  //apend at the end of log file
 printf("******* start to write to this file *************\n");
 fprintf(ffoobar,"start to foobar\n");
 fflush(stdout);
+fflush(stderr);
 fflush(ffoobar);
 //end of bookmark
 
@@ -1102,6 +1114,7 @@ fflush(ffoobar);
 #else
     printf("%d DONT call open_devnull_stdio()\n", __LINE__);
     fflush(stdout);
+    fflush(stderr);
 #endif    
     klog_init();
     property_init();
@@ -1190,7 +1203,6 @@ fflush(ffoobar);
 #if BOOTCHART
     queue_builtin_action(bootchart_init_action, "bootchart_init");
 #endif
-
     for(;;) {
         int nr, i, timeout = -1;
 
