@@ -80,6 +80,8 @@ static struct action *cur_action = NULL;
 static struct command *cur_command = NULL;
 static struct listnode *command_queue = NULL;
 
+#define INIT_LOG (1)
+
 void notify_service_state(const char *name, const char *state)
 {
     char pname[PROP_NAME_MAX];
@@ -123,9 +125,10 @@ int add_environment(const char *key, const char *val)
 
     return 1;
 }
-#if 0
+#ifndef INIT_LOG
 static void zap_stdio(void)
 {
+    printf("!!!!!************* you should not see this , zap_stdio() is banned ***************\n");
     int fd;
     fd = open("/dev/null", O_RDWR);
     dup2(fd, 0);
@@ -138,8 +141,10 @@ static void open_console()
 {
     int fd;
     if ((fd = open(console_name, O_RDWR)) < 0) {
+        printf("******* %s open fail ********\n" , console_name );
         fd = open("/dev/null", O_RDWR);
     } else {
+        printf("------- %s open successful ---------\n" , console_name );
         ioctl(fd, TIOCSCTTY, 0);
     }
     ioctl(fd, TIOCSCTTY, 0);
@@ -287,15 +292,17 @@ void service_start(struct service *svc, const char *dynamic_args)
             }
         }
 //bookmark: DO NOT redirect stdio
-#if 0
+#ifndef INIT_LOG
         if (needs_console) {
+            printf("-----------need console--------------\n");
             setsid();
             open_console();
         } else {
-            zap_stdio();
+            printf("***********not need console************\n");
+            zap_stdio();  //this line nulled stdio
         }
 #else
-printf("-----DO NOT call open_console() or zap_stdio() \n");
+printf("-----DO NOT call open_console() or zap_stdio() -------\n");
 fflush(stdout);
 fflush(stderr);
 #endif
@@ -308,7 +315,7 @@ fflush(stderr);
             INFO("env[%d] = '%s'\n", n, ENV[n]);
         }
 #endif
-#if 1
+#ifdef INIT_LOG  //print service args every time
         for (n = 0; svc->args[n]; n++) {
             printf("args[%d] = '%s'\n", n, svc->args[n]);
         }
@@ -1056,9 +1063,7 @@ int main(int argc, char **argv)
     int keychord_fd_init = 0;
     bool is_charger = false;
     char initrc_path[PROP_VALUE_MAX];
-//bookmark: hack return 
-//asm volatile("nop\n\t nop\n\t nop\n\t");
-//return -1;
+
     /* If we are called as 'modprobe' command, we run as a
      * standalone executable and reuse ueventd's logic to do the job.
      */
@@ -1069,19 +1074,23 @@ int main(int argc, char **argv)
     if (!strcmp(basename(argv[0]), "watchdogd"))
         return watchdogd_main(argc, argv);
 
-//bookmark:redirect stdoio to file
-//asm volatile("nop\n\t nop\n\t nop\n\t");
-//return 0;
-FILE * ffoobar = fopen("/foobar","a");
-freopen("/init_log.txt", "a", stdout);  //apend at the end of log file
-freopen("/init_log.txt", "a", stderr);  //apend at the end of log file
-printf("******* start to write to this file *************\n");
-fprintf(ffoobar,"start to foobar\n");
-fflush(stdout);
-fflush(stderr);
-fflush(ffoobar);
-//end of bookmark
+#ifdef INIT_LOG
+/*
+ *  tcwu: open a file foobar to preserver my debug msg 
+ */
+//    FILE * ffoobar = fopen("/foobar","a");
+//    fprintf(ffoobar,"start to foobar\n");
+//    fflush(ffoobar);
+    fflush(stdout);
+    fflush(stderr);
 
+    printf("------------redirect stdio to file init.log-----------------\n");
+    int intlog = open("/init.log",O_APPEND|O_WRONLY|O_CREAT);
+    printf("fd of init.log is %d\n",intlog);
+    dup2(intlog,1);
+    dup2(intlog,2);
+    close(intlog);
+#endif
     /* clear the umask */
     umask(0);
 
@@ -1109,10 +1118,10 @@ fflush(ffoobar);
          * Now that tmpfs is mounted on /dev, we can actually
          * talk to the outside world.
          */
-#if 0
+#ifndef INIT_LOG
     open_devnull_stdio();
 #else
-    printf("%d DONT call open_devnull_stdio()\n", __LINE__);
+    printf("---------line%d DONT call open_devnull_stdio()--------------\n", __LINE__);
     fflush(stdout);
     fflush(stderr);
 #endif    
@@ -1204,6 +1213,11 @@ fflush(ffoobar);
     queue_builtin_action(bootchart_init_action, "bootchart_init");
 #endif
     for(;;) {
+#ifdef INIT_LOG
+        printf(".");       //heart beat of infinite loop in main function
+        fflush(stdout);
+        fflush(stderr);
+#endif        
         int nr, i, timeout = -1;
 
         execute_one_command();
