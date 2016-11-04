@@ -1085,7 +1085,7 @@ int main(int argc, char **argv)
     fflush(stderr);
 
     printf("------------redirect stdio to file init.log-----------------\n");
-    int intlog = open("/init.log",O_APPEND|O_WRONLY|O_CREAT);
+    int intlog = open("/init.log",O_APPEND|O_WRONLY|O_CREAT,0777);
     printf("fd of init.log is %d\n",intlog);
     dup2(intlog,1);
     dup2(intlog,2);
