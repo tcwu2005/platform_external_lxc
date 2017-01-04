@@ -92,8 +92,11 @@ static int do_rsync(const char *src, const char *dest)
 	strcpy(s, src);
 	s[l-2] = '/';
 	s[l-1] = '\0';
-
+#if 0
 	execlp("rsync", "rsync", "-a", s, dest, (char *)NULL);
+#else   //android
+    execlp("busybox", "cp", "-a", s, dest, (char *)NULL);
+#endif
 	exit(1);
 }
 

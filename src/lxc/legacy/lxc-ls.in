@@ -96,4 +96,4 @@ if [ ! -z "$directory" ]; then
 fi
 
 cd "$directory"
-ls -d $@ -- $containers
+busybox ls -d $@ -- $containersa ###toolbox's ls not support "ls --"
