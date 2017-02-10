@@ -22,7 +22,7 @@ LXC_TOP := $(ANDROID_BUILD_TOP)/$(LOCAL_PATH)
 
 # Android's toolchain lacks sane defaults, so we must ensure that we pass all
 # the necessary flags to the native build process.
-android_config_h := $(call select-android-config-h,target_linux-x86)
+android_config_h := $(call select-android-config-h,linux-arm)
 LXC_CFLAGS := $(subst -include $(android_config_h),,$(TARGET_GLOBAL_CFLAGS))
 LXC_CFLAGS := $(subst -I $(dir $(android_config_h)),,$(LXC_CFLAGS))
 LXC_C_INCLUDES := $(addprefix -I$(ANDROID_BUILD_TOP)/,$(TARGET_C_INCLUDES))
@@ -33,11 +33,7 @@ LXC_BUILD_DIR := $(ANDROID_PRODUCT_OUT)/obj/lxc
 LXC_INSTALL_DIR := $(ANDROID_PRODUCT_OUT)
 
 # only include lxc-* binaries in userdebug builds
-#ifeq ($(TARGET_BUILD_VARIANT),userdebug)
 LXC_CONF_BINDIR := /system/bin
-#else
-#LXC_CONF_BINDIR := /obj/lxc/out/bin
-#endif
 
 ifeq ($(TARGET_IS_64_BIT),true)
 LXC_CONF_LIBDIR := /system/lib64
@@ -76,7 +72,7 @@ $(LOCAL_PATH)/../../$(TARGET_OUT_SHARED_LIBRARIES)/liblxc.so: $(TARGET_OUT_INTER
 	mkdir -p $(LXC_BUILD_DIR) && cd $(LXC_BUILD_DIR) && \
 	cp -r $(LXC_TOP)/config $(LXC_BUILD_DIR) && \
 	$(LXC_TOP)/configure \
-		--host=i686-linux-android \
+		--host=arm-linux-androideabi \
 		--bindir="$(LXC_CONF_BINDIR)" \
 		--libdir="$(LXC_CONF_LIBDIR)" \
 		--disable-api-docs \
