@@ -56,6 +56,7 @@
 
 lxc_log_define(lxc_start_ui, lxc);
 
+
 static struct lxc_list defines;
 
 static int ensure_path(char **confpath, const char *path)
@@ -202,6 +203,8 @@ Options :\n\
 	.pidfile = NULL,
 };
 
+#define __ALINE__  ERROR("_%s_%s_:%d\n", __FILE__, __func__,__LINE__);
+ 
 int main(int argc, char *argv[])
 {
 	int err = 1;
@@ -213,12 +216,12 @@ int main(int argc, char *argv[])
 		NULL,
 	};
 	struct lxc_container *c;
-
+__ALINE__  
 	lxc_list_init(&defines);
 
 	if (lxc_caps_init())
 		return err;
-
+__ALINE__  
 	if (lxc_arguments_parse(&my_args, argc, argv))
 		return err;
 
@@ -226,14 +229,14 @@ int main(int argc, char *argv[])
 		args = default_args;
 	else
 		args = my_args.argv;
-
+__ALINE__  
 	if (lxc_log_init(my_args.name, my_args.log_file, my_args.log_priority,
 			 my_args.progname, my_args.quiet, my_args.lxcpath[0]))
 		return err;
 	lxc_log_options_no_override();
 
 	const char *lxcpath = my_args.lxcpath[0];
-
+__ALINE__
 	/*
 	 * rcfile possibilities:
 	 * 1. rcfile from random path specified in cli option
@@ -256,14 +259,14 @@ int main(int argc, char *argv[])
 		}
 	} else {
 		int rc;
-
+__ALINE__  
 		rc = asprintf(&rcfile, "%s/%s/config", lxcpath, my_args.name);
 		if (rc == -1) {
 			SYSERROR("failed to allocate memory");
 			return err;
 		}
 		INFO("using rcfile %s", rcfile);
-
+__ALINE__  
 		/* container configuration does not exist */
 		if (access(rcfile, F_OK)) {
 			free(rcfile);
@@ -275,7 +278,7 @@ int main(int argc, char *argv[])
 			return err;
 		}
 	}
-
+__ALINE__  
 	if (c->is_running(c)) {
 		ERROR("Container is already running.");
 		err = 0;
@@ -288,7 +291,7 @@ int main(int argc, char *argv[])
 	if (!c->lxc_conf)
 		c->lxc_conf = lxc_conf_init();
 	conf = c->lxc_conf;
-
+__ALINE__  
 	if (lxc_config_define_load(&defines, conf))
 		goto out;
 
@@ -296,24 +299,24 @@ int main(int argc, char *argv[])
 		ERROR("Executing '/sbin/init' with no configuration file may crash the host");
 		goto out;
 	}
-
+__ALINE__  
 	if (ensure_path(&conf->console.path, my_args.console) < 0) {
 		ERROR("failed to ensure console path '%s'", my_args.console);
 		goto out;
 	}
-
+__ALINE__  
 	if (ensure_path(&conf->console.log_path, my_args.console_log) < 0) {
 		ERROR("failed to ensure console log '%s'", my_args.console_log);
 		goto out;
 	}
-
+__ALINE__  
 	if (my_args.pidfile != NULL) {
 		if (ensure_path(&c->pidfile, my_args.pidfile) < 0) {
 			ERROR("failed to ensure pidfile '%s'", my_args.pidfile);
 			goto out;
 		}
 	}
-
+__ALINE__  
 	int i;
 	for (i = 0; i < LXC_NS_MAX; i++) {
 		if (my_args.share_ns[i] == NULL)
@@ -328,16 +331,16 @@ int main(int argc, char *argv[])
 			goto out;
 		conf->inherit_ns_fd[i] = fd;
 	}
-
+__ALINE__  
 	if (!my_args.daemonize) {
 		c->want_daemonize(c, false);
 	}
 
 	if (my_args.close_all_fds)
 		c->want_close_all_fds(c, true);
-
+__ALINE__  
 	err = c->start(c, 0, args) ? 0 : 1;
-
+__ALINE__  
 	if (err) {
 		ERROR("The container failed to start.");
 		if (my_args.daemonize)

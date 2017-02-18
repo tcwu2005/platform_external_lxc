@@ -942,7 +942,7 @@ static int setup_dev_symlinks(const struct lxc_rootfs *rootfs)
 		}
 
 		ret = symlink(d->oldpath, path);
-
+printf("symlink(%s) (%s)\n",d->oldpath,path);
 		if (ret && errno != EEXIST) {
 			if ( errno == EROFS ) {
 				WARN("Warning: Read Only file system while creating %s", path);
@@ -4117,7 +4117,7 @@ static bool verify_start_hooks(struct lxc_conf *conf)
 
 	return true;
 }
-
+#define __ALINE__  ERROR("_%s_%s_:%d\n", __FILE__, __func__,__LINE__);  
 int lxc_setup(struct lxc_handler *handler)
 {
 	const char *name = handler->name;
@@ -4214,18 +4214,26 @@ int lxc_setup(struct lxc_handler *handler)
 		ERROR("failed to setup the ttys for '%s'", name);
 		return -1;
 	}
-
+#if 0 
 	if (!lxc_conf->is_execute && setup_dev_symlinks(&lxc_conf->rootfs)) {
 		ERROR("failed to setup /dev symlinks for '%s'", name);
 		return -1;
 	}
+#else
+    ERROR(" skip setup_dev_symlinks ");
+    __ALINE__
+#endif
 
+#if 0 
 	/* mount /proc if it's not already there */
 	if (tmp_proc_mount(lxc_conf) < 0) {
 		ERROR("failed to LSM mount proc for '%s'", name);
 		return -1;
 	}
-
+#else
+    ERROR(" skip tmp_proc_mount ");
+    __ALINE__
+#endif
 	if (setup_pivot_root(&lxc_conf->rootfs)) {
 		ERROR("failed to set rootfs for '%s'", name);
 		return -1;
