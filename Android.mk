@@ -76,7 +76,7 @@ $(LOCAL_PATH)/../../$(TARGET_OUT_SHARED_LIBRARIES)/liblxc.so: $(TARGET_OUT_INTER
 	mkdir -p $(LXC_BUILD_DIR) && cd $(LXC_BUILD_DIR) && \
 	cp -r $(LXC_TOP)/config $(LXC_BUILD_DIR) && \
 	$(LXC_TOP)/configure \
-		--host=i686-linux-android \
+		--host=x86_64-linux-android \
 		--bindir="$(LXC_CONF_BINDIR)" \
 		--libdir="$(LXC_CONF_LIBDIR)" \
 		--disable-api-docs \
