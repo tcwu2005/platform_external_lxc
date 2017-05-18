@@ -98,7 +98,9 @@ $(LOCAL_PATH)/../../$(TARGET_OUT_SHARED_LIBRARIES)/liblxc.so: $(TARGET_OUT_INTER
 			-L${ANDROID_BUILD_TOP}/${TARGET_OUT_INTERMEDIATE_LIBRARIES} \
 			$(LXC_CRTEND_O)" && \
 		$(MAKE) && \
-		$(MAKE) DESTDIR=$(LXC_INSTALL_DIR) install
+		$(MAKE) DESTDIR=$(LXC_INSTALL_DIR) install && \
+		cp -a $(LXC_TOP)/zgrep $(LXC_INSTALL_DIR)/system/bin && \
+		cp -a $(LXC_TOP)/lxc-backup $(LXC_INSTALL_DIR)/system/bin 
 
 # This prebuilt module is necessary for integrating the natively built library
 # with the reset of the Android build system.
